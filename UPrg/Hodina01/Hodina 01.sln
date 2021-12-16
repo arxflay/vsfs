@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 03 Pocet cisel mensich nez 10", "Priklad 03 Pocet cisel mensich nez 10\Priklad 03 Pocet cisel mensich nez 10.csproj", "{A283D546-4B76-45ED-8B69-D7829F604E3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 04 Nejvetsi ze tri cisel", "Priklad 04 Nejvetsi ze tri cisel\Priklad 04 Nejvetsi ze tri cisel.csproj", "{4571E3E3-48A9-4100-8B64-46DFF22F01AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 05 Prostredni ze tri cisel", "Priklad 05 Prostredni ze tri cisel\Priklad 05 Prostredni ze tri cisel.csproj", "{B834A801-BD4B-4228-84B9-9A4CF5291FFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 01 Specificky aritmeticky vyraz", "Priklad 01 Specificky aritmeticky vyraz\Priklad 01 Specificky aritmeticky vyraz.csproj", "{720726BB-51B9-4712-BF42-EC2E06D4C615}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 02 Zbytek po celociselnem deleni bez operatoru modul", "Priklad 02 Zbytek po celociselnem deleni bez operatoru modu\Priklad 02 Zbytek po celociselnem deleni bez operatoru modul.csproj", "{4FCF1614-2748-4603-BFAF-628C04058BC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 06 Ruzna cisla", "Priklad 06 Ruzna cisla\Priklad 06 Ruzna cisla.csproj", "{EA515ADF-D8C3-442D-871A-FC1196C249A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 07 Licha vs suda cisla", "Priklad 07 Licha vs suda cisla\Priklad 07 Licha vs suda cisla.csproj", "{475E0B04-07D7-46A4-A511-C7C9440305A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Priklad 08 Delitel cisla", "Priklad 08 Delitel cisla\Priklad 08 Delitel cisla.csproj", "{A72BB1CF-7318-42A9-95DB-9AA305947FC5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A283D546-4B76-45ED-8B69-D7829F604E3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A283D546-4B76-45ED-8B69-D7829F604E3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A283D546-4B76-45ED-8B69-D7829F604E3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A283D546-4B76-45ED-8B69-D7829F604E3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4571E3E3-48A9-4100-8B64-46DFF22F01AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4571E3E3-48A9-4100-8B64-46DFF22F01AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4571E3E3-48A9-4100-8B64-46DFF22F01AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4571E3E3-48A9-4100-8B64-46DFF22F01AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B834A801-BD4B-4228-84B9-9A4CF5291FFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B834A801-BD4B-4228-84B9-9A4CF5291FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B834A801-BD4B-4228-84B9-9A4CF5291FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B834A801-BD4B-4228-84B9-9A4CF5291FFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{720726BB-51B9-4712-BF42-EC2E06D4C615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{720726BB-51B9-4712-BF42-EC2E06D4C615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{720726BB-51B9-4712-BF42-EC2E06D4C615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{720726BB-51B9-4712-BF42-EC2E06D4C615}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FCF1614-2748-4603-BFAF-628C04058BC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FCF1614-2748-4603-BFAF-628C04058BC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FCF1614-2748-4603-BFAF-628C04058BC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FCF1614-2748-4603-BFAF-628C04058BC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA515ADF-D8C3-442D-871A-FC1196C249A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA515ADF-D8C3-442D-871A-FC1196C249A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA515ADF-D8C3-442D-871A-FC1196C249A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA515ADF-D8C3-442D-871A-FC1196C249A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{475E0B04-07D7-46A4-A511-C7C9440305A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{475E0B04-07D7-46A4-A511-C7C9440305A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{475E0B04-07D7-46A4-A511-C7C9440305A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{475E0B04-07D7-46A4-A511-C7C9440305A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A72BB1CF-7318-42A9-95DB-9AA305947FC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A72BB1CF-7318-42A9-95DB-9AA305947FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A72BB1CF-7318-42A9-95DB-9AA305947FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A72BB1CF-7318-42A9-95DB-9AA305947FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {92A817CD-993A-43B2-BD08-8BC6D98FBE7C}
+	EndGlobalSection
+EndGlobal
