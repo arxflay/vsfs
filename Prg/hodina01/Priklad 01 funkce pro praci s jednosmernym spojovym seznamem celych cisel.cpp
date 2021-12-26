@@ -225,7 +225,7 @@ void removeLastMatch(linkedList *list, int val) //d)
     if (list == nullptr)
         throw std::runtime_error("list is null");
     else if (list->count == 0)
-        throw std::runtime_error("list is empty");
+        return;
 
     listNode *node{ list->first };
     listNode *prev{ nullptr };
@@ -255,7 +255,7 @@ void removeHeighiest(linkedList *list) //e)
     if (list == nullptr)
         throw std::runtime_error("list is null");
     else if (list->count == 0)
-        throw std::runtime_error("list is empty");
+        return;
 
     listNode *node{ list->first };
     listNode *prev{ nullptr };
@@ -285,9 +285,7 @@ void reverse(linkedList *list) //f)
 {
     if (list == nullptr)
         throw std::runtime_error("list is null");
-    else if (list->count == 0)
-        throw std::runtime_error("list is empty");
-    else if (list->count == 1)
+    else if (list->count <= 1)
         return;
 
     listNode *node{ list->first };
@@ -310,9 +308,7 @@ void sort(linkedList *list) //g)
 {
     if (list == nullptr)
         throw std::runtime_error("list is null");
-    else if (list->count == 0)
-        throw std::runtime_error("list is empty");
-    else if (list->count == 1)
+    else if (list->count <= 1)
         return;
 
     listNode *current{ list->first };
@@ -351,9 +347,7 @@ void swapFirstLast(linkedList *list) //h)
 {
     if (list == nullptr)
         throw std::runtime_error("list is null");
-    else if (list->count == 0)
-        throw std::runtime_error("list is empty");
-    else if (list->count == 1)
+    else if (list->count <= 1)
         return;
 
     listNode *prev{ list->first };
@@ -372,11 +366,9 @@ void swapSecondPenultimate(linkedList *list) //i)
 
     switch(list->count)
     {
-        case 0:
-            throw std::runtime_error("list is empty");
-            break;
         case 2:
             swapNodes(list, list->first, nullptr, list->last, list->first);
+        case 0:
         case 1:
             return;
     }

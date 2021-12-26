@@ -190,7 +190,7 @@ void reverse(doublyLinkedList *list) //b)
 {
     if (list == nullptr)
         throw std::runtime_error("list is null");
-    else if (list->count == 1 || list->count == 0)
+    else if (list->count <= 1)
         return;
 
     listNode *node{ list->first };
@@ -214,7 +214,7 @@ void sort(doublyLinkedList *list) //c)
 {
     if (list == nullptr)
         throw std::runtime_error("list is null");
-    else if (list->count == 1 || list->count == 0)
+    else if (list->count <= 1)
         return;
 
     listNode *current{ list->first };
@@ -246,7 +246,7 @@ void swapFirstLast(doublyLinkedList *list) //d)
 {
     if (list == nullptr)
         throw std::runtime_error("list is null");
-    else if (list->count == 1 || list->count == 0)
+    else if (list->count <= 1)
         return;
 
     swapNodes(list, list->first, list->last);
@@ -277,7 +277,7 @@ void swapSecondPenultimate(doublyLinkedList *list) //e)
 }
 
 
-/*int main()
+int main()
 {
     srand(time(NULL));
     int array[10];
@@ -309,4 +309,4 @@ void swapSecondPenultimate(doublyLinkedList *list) //e)
     
     
     return 0;
-} */
+} 
