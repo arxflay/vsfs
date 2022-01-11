@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Tento zdrojovy kod jsem vypracoval zcela samostatne bez cizi pomoci
+    Neokopiroval jsem ani neopsal jsem cizi zdrojove kody
+    Nikdo mi pri vypracovani neradil
+    Pokud nektery radek porusuje toto pravidlo je oznacen komentarem
+    NENI MOJE TVORBA
+    Poruseni techto pravidel se povazuje za podvod, ktery lze potrestat VYLOUCENIM ZE STUDIA
+    Alexej Fedorenko, učo 37676 -->
+
+<!--xml je vytvoren podle wikipedia a diagramu z:
+    https://www.researchgate.net/figure/A-Computer-Programming-Language-Tree_fig1_268035420 -->
+
+<lang name="Assemlby">
+    <lang name="Fortran">
+        <lang name="B">
+            <lang name="C">
+                <lang name="Python"></lang>
+                <lang name="Objective-C"></lang>
+                <lang name="C++">
+                    <lang name="Rust"/>
+                    <lang name="PHP"/>
+                    <lang name="Nim"/>
+                </lang>
+                <lang name="AWK">
+                    <lang name="AMPL"></lang>
+                    <lang name="Perl"></lang>
+                    <lang name="Lua"></lang>
+                    <lang name="Korn Shell"></lang>
+                </lang>
+                <lang name="Java">
+                    <lang name="Kotlin"></lang>
+                    <lang name="JavaScript"></lang>
+                    <lang name="C#">
+                        <lang name="Dart"></lang>
+                        <lang name="F#"></lang>
+                        <lang name="Swift"></lang>
+                    </lang>
+                </lang>
+            </lang>
+        </lang>
+    </lang>
+    <lang name="BCPL">
+        <lang name="Algol">
+            <lang name="Ada"></lang>
+            <lang name="Pascal"></lang>
+            <lang name="Basic">
+                <lang name="Visual Basic"></lang>
+                <lang name="Visual Basic .NET"></lang>
+            </lang>      
+        </lang>
+        <lang name="PL1">
+            <lang name="Control language">
+                <lang name="Powershell"></lang>
+            </lang>
+            <lang name="Rexx"></lang>
+        </lang>
+    </lang>
+</lang>
