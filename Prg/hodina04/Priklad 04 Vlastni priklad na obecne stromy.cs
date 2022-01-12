@@ -1,12 +1,4 @@
-﻿// Tento zdrojovy kod jsem vypracoval zcela samostatne bez cizi pomoci
-// Neokopiroval jsem ani neopsal jsem cizi zdrojove kody
-// Nikdo mi pri vypracovani neradil
-// Pokud nektery radek porusuje toto pravidlo je oznacen komentarem
-// NENI MOJE TVORBA
-// Poruseni techto pravidel se povazuje za podvod, ktery lze potrestat VYLOUCENIM ZE STUDIA
-// Alexej Fedorenko, učo 37676 
-
-using System;
+﻿using System;
 using System.Xml.Linq;
 using System.Linq;
 using System.IO;
@@ -126,23 +118,41 @@ namespace Priklad_04_Vlastni_priklad_na_obecne_stromy
 
         }
 
+        static int GetCount(TreeNode node)
+        {
+            int count = 0;
+            for(int i = 0; i < node.children.Length; i++)
+            {
+                if (node.children[i] != null)
+                    count++;
+                else
+                    return count;
+            }
+
+            return count;
+        }
+
         static void WriteProgTree(TreeNode node)
         {
             if (node == null)
                 return;
 
-            WriteProgTreeRec(node, "");
+            WriteProgTreeRec(node, "", "");
         }
 
-        static void WriteProgTreeRec(TreeNode node, string depthSpaces = "")
+        static void WriteProgTreeRec(TreeNode node, string childSpaces, string depthSpaces = "")
         {
-            string newDepthTabs = depthSpaces + "  ";
+            int count = GetCount(node);
 
-            Console.WriteLine("{0} {1}", depthSpaces, node.value);
+            Console.WriteLine("{0}{1}", childSpaces, node.value);
 
-            for (int i = 0; i < node.children.Length; i++)
-                if (node.children[i] != null)
-                    WriteProgTreeRec(node.children[i], newDepthTabs);
+            for (int i = 0; i < count ; i++)
+            {
+                if (i == count - 1)
+                    WriteProgTreeRec(node.children[i], depthSpaces + " =-", depthSpaces + "  ");
+                else
+                    WriteProgTreeRec(node.children[i], depthSpaces + " |-", depthSpaces + " | ");
+            }
         }
         
 
