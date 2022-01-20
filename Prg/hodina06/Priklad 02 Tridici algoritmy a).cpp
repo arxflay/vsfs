@@ -10,14 +10,6 @@
 #include <cstdlib>
 #include <ctime>
 
-void writeArray(int *array, int length)
-{
-    for (int i{ 0 }; i < length; i++)
-        std::cout << array[i] << ' ';
-        
-    std::cout << '\n';
-}
-
 struct heapNode
 {
     heapNode *parent;
@@ -25,6 +17,14 @@ struct heapNode
     heapNode *right;
     int value;
 };
+
+void writeArray(int *array, int length)
+{
+    for (int i{ 0 }; i < length; i++)
+        std::cout << array[i] << ' ';
+        
+    std::cout << '\n';
+}
 
 heapNode *createNode(int value, heapNode *parent)
 {
@@ -161,27 +161,6 @@ void siftUp(heapNode *node, heapNode **root)
     }
 }
 
-heapNode *insert(heapNode *root, int value)
-{
-    if (root == nullptr)
-        return createNode(value, nullptr);
-
-    heapNode *node{ insertRec(root, value) };
-    siftUp(node, &root);
-
-    return root;
-}
-
-heapNode *arrToHeapTree(int *arr, int right)
-{
-    heapNode *root{ createNode(arr[0], nullptr) };
-
-    for (int i = 1; i <= right; i++)
-        root = insert(root, arr[i]);
-
-    return root;
-}
-
 heapNode *reheap(heapNode *root)
 {
     heapNode *newRoot{ root };
@@ -214,6 +193,17 @@ heapNode *reheap(heapNode *root)
     return newRoot;
 }
 
+heapNode *insert(heapNode *root, int value)
+{
+    if (root == nullptr)
+        return createNode(value, nullptr);
+
+    heapNode *node{ insertRec(root, value) };
+    siftUp(node, &root);
+
+    return root;
+}
+
 heapNode *removeRoot(heapNode *root, int &rootVal)
 {
     rootVal = root->value;
@@ -232,19 +222,28 @@ heapNode *removeRoot(heapNode *root, int &rootVal)
             break;
     }
 
-    swap(root, node);
-
-    if (root->parent != nullptr)
+    if (node != root)
     {
-        if (root->parent->left == root)
-            root->parent->left = nullptr;
-        else
-            root->parent->right = nullptr;
+        swap(root, node);
+        changeParentChild(root, nullptr);
+        node = reheap(node);
     }
+    else
+        node = nullptr;
 
     delete root;
 
     return node;
+}
+
+heapNode *arrToHeapTree(int *arr, int right)
+{
+    heapNode *root{ createNode(arr[0], nullptr) };
+
+    for (int i = 1; i <= right; i++)
+        root = insert(root, arr[i]);
+
+    return root;
 }
 
 static inline void write_cb(heapNode *node)
@@ -264,7 +263,6 @@ void heapsort(int *arr, int right)
     while(last >= 0)
     {
         root = removeRoot(root, val);
-        root = reheap(root);
         arr[last--] = val;
     }
 
@@ -287,4 +285,4 @@ int main()
     writeArray(array, length);
     
     return 0;
-}
+} 
