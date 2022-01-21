@@ -9,16 +9,19 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <cstdio>
 #include "heapsort.hxx"
 
 constexpr int MERGE_PAGE_SIZE{ 4 };
 
+//returns last read int
 int bufferReadInts(std::ifstream& input, int *buffer, int runSize, int &bufferElCount)
 {
     for (int i{ 0 }; i < runSize && !input.eof(); i++)
         input >> buffer[bufferElCount++];
-
-    return buffer[bufferElCount];
+    
+    return buffer[bufferElCount - 1];
 }
 
 void bufferWrite(std::ostream& fout, int *buffer, int runSize, int &bufferElCount)
@@ -30,7 +33,6 @@ void bufferWrite(std::ostream& fout, int *buffer, int runSize, int &bufferElCoun
         else
             fout << buffer[--bufferElCount] << ' ';
     }
-
 }
 
 compFunc changeComp(compFunc func)
@@ -73,7 +75,7 @@ void externalMerge(const std::string &f1, const std::string &f2, const std::stri
             f1lastval = bufferReadInts(f1Input, buffer, MERGE_PAGE_SIZE, bufferElCount);
             f2lastval = bufferReadInts(f2Input, buffer, MERGE_PAGE_SIZE, bufferElCount);
         }
-        else if (f2lastval >= f1lastval)
+        else if (comp(f1lastval, f2lastval))
             f1lastval = bufferReadInts(f1Input, buffer, MERGE_PAGE_SIZE, bufferElCount);
         else
             f2lastval = bufferReadInts(f2Input, buffer, MERGE_PAGE_SIZE, bufferElCount);
@@ -104,7 +106,90 @@ void externalMerge(const std::string &f1, const std::string &f2, const std::stri
     fout.close();
 }
 
+//K-way using iterative 2-way approach
+void externalMergeK(const std::string *filenames, size_t k, const std::string &output, compFunc comp)
+{
+    if (k < 2)
+        std::cerr << "ERROR: number of files must be 2 or greater" << '\n';
+
+    static const std::string mergetag{ "mergefile" };
+    std::string curtag{ mergetag + std::to_string(1) };
+    externalMerge(filenames[0], filenames[1], curtag, comp);
+
+    for (size_t i{ 2 }; i < k; i++)
+    {
+        std::string newtag{ mergetag + std::to_string(i) };
+        externalMerge(curtag, filenames[i], newtag, comp);
+        remove(curtag.c_str());
+        curtag = newtag;
+    }
+
+    rename(curtag.c_str(), output.c_str());
+}
+
+int createRuns(const std::string &filename, int ways, size_t runSize, compFunc comp)
+{
+    comp = changeComp(comp);
+
+    std::ifstream inputFile{};
+    std::ofstream page{};
+    int *buffer{ new int[runSize]{} };
+    int runCount{ 0 };
+
+    inputFile.open(filename);
+    inputFile.peek();
+
+    for (; runCount < ways && !inputFile.eof(); runCount++)
+    {
+        int bufferCount{ 0 };
+        page.open(std::to_string(runCount));
+
+        bufferReadInts(inputFile, buffer, runSize, bufferCount);
+        heapsort(buffer, bufferCount - 1, comp);
+        bufferWrite(page, buffer, runSize, bufferCount);
+
+        page.close();
+    }
+
+    delete[] buffer;
+
+    return runCount;
+}
+
+void externalSortFile(const std::string &filename, const std::string &output, int ways, size_t runSize, compFunc comp)
+{
+    int runCount{ createRuns(filename, ways, runSize, comp ) };
+    std::string *filenames{ new std::string[runCount]{} };
+
+    for (int i{ 0 }; i < runCount; i++)
+        filenames[i] = std::to_string(i);
+
+    if (runCount == 1)
+        rename(filenames[0].c_str(), output.c_str());
+    else
+        externalMergeK(filenames, runCount, output, comp);
+
+    for (int i{ 0 }; i < runCount; i++)
+        remove(filenames[i].c_str());
+
+    delete[] filenames;
+}
+
 int main()
 {
-    externalMerge("f1.txt", "f2.txt", "fout.txt", asc);
+    srand(time(NULL));
+    size_t count{ 10000000 };
+    std::ofstream testfile{};
+    testfile.open("ff1.txt");
+
+    for (size_t i{ 0 }; i < count; i++)
+    {
+        if (i == count - 1)
+            testfile << rand() % 1000000;
+        else
+            testfile << rand() % 1000000 << ' ';  
+    }
+    testfile.close();
+    
+    externalSortFile("ff1.txt", "fout.txt", 10, count / 10, desc);
 }
