@@ -16,7 +16,7 @@
 constexpr int MERGE_PAGE_SIZE{ 4 };
 
 //returns last read int
-int bufferReadInts(std::ifstream& input, int *buffer, int runSize, int &bufferElCount)
+int bufferReadInts(std::ifstream &input, int *buffer, int runSize, int &bufferElCount)
 {
     for (int i{ 0 }; i < runSize && !input.eof(); i++)
         input >> buffer[bufferElCount++];
@@ -24,7 +24,7 @@ int bufferReadInts(std::ifstream& input, int *buffer, int runSize, int &bufferEl
     return buffer[bufferElCount - 1];
 }
 
-void bufferWrite(std::ostream& fout, int *buffer, int runSize, int &bufferElCount)
+void bufferWrite(std::ostream &fout, int *buffer, int runSize, int &bufferElCount)
 {
     for (int i { 0 }; i < runSize && bufferElCount > 0; i++)
     {
@@ -132,6 +132,7 @@ int createRuns(const std::string &filename, int ways, size_t runSize, compFunc c
     comp = changeComp(comp);
 
     std::ifstream inputFile{};
+    inputFile.exceptions(inputFile.failbit | inputFile.badbit);
     std::ofstream page{};
     int *buffer{ new int[runSize]{} };
     int runCount{ 0 };
@@ -151,6 +152,8 @@ int createRuns(const std::string &filename, int ways, size_t runSize, compFunc c
         page.close();
     }
 
+    inputFile.close();
+
     delete[] buffer;
 
     return runCount;
@@ -159,6 +162,10 @@ int createRuns(const std::string &filename, int ways, size_t runSize, compFunc c
 void externalSortFile(const std::string &filename, const std::string &output, int ways, size_t runSize, compFunc comp)
 {
     int runCount{ createRuns(filename, ways, runSize, comp ) };
+
+    if (runCount == 0)
+        return;
+
     std::string *filenames{ new std::string[runCount]{} };
 
     for (int i{ 0 }; i < runCount; i++)
@@ -191,5 +198,5 @@ int main()
     }
     testfile.close();
     
-    externalSortFile("ff1.txt", "fout.txt", 10, count / 10, desc);
+    externalSortFile("ff1.txt", "fout.txt", 10, count / 10, asc);
 }
