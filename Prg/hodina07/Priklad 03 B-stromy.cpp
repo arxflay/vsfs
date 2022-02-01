@@ -545,7 +545,7 @@ btreeNode *findPredecessor(btreeNode *node)
 void deleteNodeKey(btreeNode *node, int keyPos)
 {
     int oldkey{ node->keys[keyPos] };
-    btreeNode *predecessor{ findPredecessor(node->children[0]) };
+    btreeNode *predecessor{ findPredecessor(node->children[keyPos]) };
     node->keys[keyPos] = predecessor->keys[predecessor->keysCount - 1];
     predecessor->keys[predecessor->keysCount - 1] = oldkey;
     btreeDelete(predecessor, oldkey);
