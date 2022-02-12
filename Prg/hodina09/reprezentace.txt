@@ -1,0 +1,6 @@
+318 empty
+0 in_relation_with 10 20 30
+10 in_relation_with 0 20
+20 in_relation_with 0 10 30
+30 in_relation_with 0 10
+40 empty
