@@ -132,7 +132,7 @@ void insertValue(graph *g, int_fast32_t value)
     insertNode(g, node);
 }
 
-graphNode *findNode(graph *g, int value)
+graphNode *findNode(graph *g, int_fast32_t value)
 {
     for (size_t i{ 0 }; i < g->count; i++)
     {
@@ -161,7 +161,7 @@ graph *loadGraph(const std::string &filename) //a)
         std::getline(file, line);
         strstream << line;
 
-        int value{ 0 };
+        int_fast32_t value{ 0 };
 
         if (!(strstream >> value))
             throw std::runtime_error("ERROR: INCORRECT FORMAT, first value should be an integer");
@@ -174,7 +174,7 @@ graph *loadGraph(const std::string &filename) //a)
     file.seekg(file.beg);
 
     std::string arg{};
-    int i{ 0 };
+    int_fast32_t i{ 0 };
 
     while(!file.eof())
     {
@@ -188,7 +188,7 @@ graph *loadGraph(const std::string &filename) //a)
             throw std::runtime_error("ERROR: INCORRECT FORMAT, line should contain argument");
         else if (arg == "in_relation_with")
         {
-            int value{ 0 };
+            int_fast32_t value{ 0 };
 
             while(strstream >> value)
             {
