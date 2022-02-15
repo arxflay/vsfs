@@ -38,6 +38,9 @@ struct graph
 edge *createEdge(int_fast32_t length = 0, graphNode *node = nullptr);
 
 void createConnection(graphNode *node, graphNode *target, int_fast32_t length = 0);
+void createDualConnection(graphNode *node, graphNode *target, int_fast32_t length = 0);
+void disconnectLast(graphNode *node);
+void disconnectLastDual(graphNode *node, graphNode *target);
 edge *node_getEdge(graphNode *node, int_fast32_t pos);
 graphNode *node_getConnectedNode(graphNode *node, int_fast32_t pos);
 graphNode *hasConnectionWith(graphNode *node, graphNode *target);

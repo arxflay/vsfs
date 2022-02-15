@@ -59,31 +59,29 @@ graph *createRectGraph(size_t k, size_t l) //b)
 
     int_fast64_t value{ std::numeric_limits<int_fast64_t>::min() };
 
+    for (size_t i{ 0 }; i < k * l; i++)
+    {
+        graphNode *node{ createNode(value++, i / l) };
+        insertNode(g, node);
+    }
+
     for (size_t i{ 0 }; i < k; i++)
     {
         for (size_t j{ 0 }; j < l; j++)
         {
-            graphNode *node{ createNode(value++, i) };
+            graphNode *node{ graph_getNode(g, i * l + j) };
 
-            if (j > 0)
+            if (j + 1 != l)
             {
-                size_t offset{ i * l + (j - 1) };
-                graphNode *leftNode{ graph_getNode(g, offset) };
-                
-                createConnection(leftNode, node);
-                createConnection(node, leftNode);
+                graphNode *rightNode{ graph_getNode(g, i * l + (j + 1)) };
+                createDualConnection(node, rightNode);
             }
 
             if (i > 0)
             {
-                size_t offset{ (i - 1) * l + j };
-                graphNode *upperNode{ graph_getNode(g, offset) };
-                
-                createConnection(upperNode, node);
-                createConnection(node, upperNode);
+                graphNode *upperNode{ graph_getNode(g, (i - 1) * l + j) };
+                createDualConnection(node, upperNode);
             }
-
-            insertNode(g, node);
         }
     }
 
@@ -161,11 +159,12 @@ int main()
 {
     graph *g{ createRectGraph(1, 4) };
     saveRectGraph(g, "test.txt");
-    destroyGraph(g);
 
-    graph *g2{ loadGraph("reprezentace.txt") };
-    graph *skeleton{ findGraphSkeleton(g2) };
-    destroyGraph(g2);
+    graph *skeleton{ findGraphSkeleton(g) };
+    std::cout << hasCircle(skeleton) << '\n';
+
+    destroyGraph(g);
     destroyGraph(skeleton);
+
     return 0;
 }

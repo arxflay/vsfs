@@ -31,15 +31,6 @@ int_fast32_t findSmallest(graph *g, int_fast32_t lastSmallest)
     return smallest;
 }
 
-void removeLastEdge(graphNode *node)
-{
-    if (node->edgeCount == 0)
-        return;
-
-    edge *e{ node_getEdge(node, --node->edgeCount) };
-    delete e;
-}
-
 void addEdgesToSkeleton(graphNode *node, graphNode *skeletonNode, graph *skeleton, int_fast32_t validLength)
 {
     for (size_t i{ 0 }; i < node->edgeCount; i++)
@@ -54,20 +45,16 @@ void addEdgesToSkeleton(graphNode *node, graphNode *skeletonNode, graph *skeleto
             if (hasConnectionWith(skeletonNode, newConnection) != nullptr)
                 return;
 
-            createConnection(skeletonNode, newConnection, e->length);
-            createConnection(newConnection, skeletonNode, e->length);
+            createDualConnection(skeletonNode, newConnection, e->length);
 
             if (hasCircle(skeleton))
-            {
-                removeLastEdge(skeletonNode);
-                removeLastEdge(newConnection);
-            }
+                disconnectLastDual(skeletonNode, newConnection);
 
         }
     }
 }
 
-graph *findSkeleton(graph *g) //kruskal's algorithm
+graph *findSkeleton(graph *g) //a)
 {
     if (g->count == 0)
         return nullptr;
@@ -82,7 +69,7 @@ graph *findSkeleton(graph *g) //kruskal's algorithm
     }
 
     while ((length = findSmallest(g, length)) != -1)
-    {     
+    {
         for (size_t i{ 0 }; i < g->count; i++)
         {
             graphNode *node{ graph_getNode(g, i) };
@@ -104,31 +91,29 @@ graph *createRectGraph(size_t k, size_t l) //b)
 
     int_fast64_t value{ std::numeric_limits<int_fast64_t>::min() };
 
+    for (size_t i{ 0 }; i < k * l; i++)
+    {
+        graphNode *node{ createNode(value++, i / l) };
+        insertNode(g, node);
+    }
+
     for (size_t i{ 0 }; i < k; i++)
     {
         for (size_t j{ 0 }; j < l; j++)
         {
-            graphNode *node{ createNode(value++, i) };
+            graphNode *node{ graph_getNode(g, i * l + j) };
 
-            if (j > 0)
+            if (j + 1 != l)
             {
-                size_t offset{ i * l + (j - 1) };
-                graphNode *leftNode{ graph_getNode(g, offset) };
-                
-                createConnection(leftNode, node, rand() % 10);
-                createConnection(node, leftNode, rand() % 10);
+                graphNode *rightNode{ graph_getNode(g, i * l + (j + 1)) };
+                createDualConnection(node, rightNode, rand() % 10);
             }
 
             if (i > 0)
             {
-                size_t offset{ (i - 1) * l + j };
-                graphNode *upperNode{ graph_getNode(g, offset) };
-                
-                createConnection(upperNode, node, rand() % 10);
-                createConnection(node, upperNode, rand() % 10);
+                graphNode *upperNode{ graph_getNode(g, (i - 1) * l + j) };
+                createDualConnection(node, upperNode, rand() % 10);
             }
-
-            insertNode(g, node);
         }
     }
 
@@ -164,13 +149,20 @@ void writeRow(graph *g, size_t l, size_t offset, std::ofstream &file)
             file << 'x' << '\n';
         else
         {
-            graphNode *node{ graph_getNode(g, offset * l + j) };
-            file << "x-" << node_getEdge(node, 0)->length << '-';
+            graphNode *node{ graph_getNode(g, offset * l + j) }; 
+            int_fast32_t length{ 0 };
+
+            if (j == 0)
+                length = node_getEdge(node, 0)->length;
+            else
+                length = node_getEdge(node, 1)->length;
+
+            file << "x-" << length << '-';
         }
     }
 }
 
-void writeBottomEdges(graph *g, size_t l, size_t k, size_t offset, std::ofstream &file)
+void writeBottomEdges(graph *g, size_t l, size_t offset, std::ofstream &file)
 {
     for (size_t j{ 0 }; j < 3; j++)
     {
@@ -180,10 +172,12 @@ void writeBottomEdges(graph *g, size_t l, size_t k, size_t offset, std::ofstream
 
             if (j == 1)
             {
+                int_fast32_t length{ node_getEdge(node, node->edgeCount - 1)->length };
+
                 if (k == l - 1)
-                    file << node_getEdge(node, 1)->length << '\n';
+                    file << length << '\n';
                 else
-                    file << node_getEdge(node, 1)->length << "   ";
+                    file << length << "   ";
             }
             else if (k == l - 1)
                 file << "|" << '\n';
@@ -206,7 +200,7 @@ void saveRectGraph(graph *g, const std::string& filename) //c)
         writeRow(g, l, i, file);
 
         if (i != k - 1)
-            writeBottomEdges(g, l, k, i, file);
+            writeBottomEdges(g, l, i, file);
     }
 
     file.close();
@@ -218,34 +212,7 @@ int main()
     graph *g{ createRectGraph(5, 4) };
     graph *z{ findSkeleton(g) };
     saveRectGraph(g, "test.txt");
-    
-    for (size_t i{ 0 }; i < z->count; i++)
-    {
-        graphNode *node{ graph_getNode(z, i) };
-        std::cout << node->edgeCount << ':';
 
-        for (size_t j{ 0 }; j < node->edgeCount; j++)
-        {
-            std::cout << node_getEdge(node, j)->length << ' ';
-        }
-        std::cout << '\n';
-    }
-    std::cout << '\n';
-
-    for (size_t i{ 0 }; i < g->count; i++)
-    {
-        graphNode *node{ graph_getNode(g, i) };
-        std::cout << node->edgeCount << ':';
-
-        for (size_t j{ 0 }; j < node->edgeCount; j++)
-        {
-            std::cout << node_getEdge(node, j)->length << ' ';
-        }
-        std::cout << '\n';
-    }
-
-
-    
     destroyGraph(g);
     destroyGraph(z);
     return 0;

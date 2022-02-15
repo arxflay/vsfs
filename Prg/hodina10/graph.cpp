@@ -29,6 +29,27 @@ void createConnection(graphNode *node, graphNode *target, int_fast32_t length)
     node->edges->data[node->edgeCount++] = createEdge(length, target);
 }
 
+void createDualConnection(graphNode *node, graphNode *target, int_fast32_t length)
+{
+    createConnection(node, target, length);
+    createConnection(target, node, length);
+}
+
+void disconnectLast(graphNode *node)
+{
+    if (node->edgeCount == 0)
+        return;
+
+    edge *e{ node_getEdge(node, --node->edgeCount) };
+    delete e;
+}
+
+void disconnectLastDual(graphNode *node, graphNode *target)
+{
+    disconnectLast(node);
+    disconnectLast(target);
+}
+
 edge *node_getEdge(graphNode *node, int_fast32_t pos)
 {
     return (edge*)node->edges->data[pos];
