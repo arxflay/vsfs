@@ -11,18 +11,16 @@
 #include "graph.hxx"
 #include "quicksort.hxx"
 
-bool initDijkstra(graph *g)
+void initDijkstra(graph *g, size_t startPos)
 {
-    if (g->count == 0)
-        return false;
-
-    for (size_t i{ 1 }; i < g->count; i++)
+    for (size_t i{ 0 }; i < g->count; i++)
     {
+        if (i == startPos)
+            continue;
+
         graphNode *node{ graph_getNode(g, i) };
         node->distance = std::numeric_limits<uint_fast64_t>::max();
     }
-
-    return true;
 }
 
 void doDijkstra(graphNode **nodes, size_t right)
@@ -57,11 +55,10 @@ void doDijkstra(graphNode **nodes, size_t right)
 
 void dijkstra(graph *g, size_t startPos)
 {
-    if (startPos > g->count)
+    if (startPos >= g->count)
         return;
 
-    if (!initDijkstra(g))
-        return;
+    initDijkstra(g, startPos);
 
     graphNode *startNode{ graph_getNode(g, startPos) };
     graphNode *firstNode{ graph_getNode(g, 0) };
@@ -78,7 +75,6 @@ void dijkstra(graph *g, size_t startPos)
 
     delete[] copy;
 }
-
 
 int main()
 {
