@@ -121,7 +121,12 @@ int astrSetFromCstr(astring astr, const char *cstr)
 {
     if (astr == NULL)
         return ASTRING_ERROR;
-    else if (astr_cstr(astr) == NULL)
+
+    size_t cstrLen = strlen(cstr);
+    astr->m_len = cstrLen;
+    astr->m_rlen = astrLen(astr) + 1;
+
+    if (astr_cstr(astr) == NULL)
     {
         astr->m_buffer = strdup(cstr);
         check_mem(astr_cstr(astr));
@@ -129,47 +134,11 @@ int astrSetFromCstr(astring astr, const char *cstr)
         return ASTRING_SUCCESS;
     }
 
-    size_t cstrLen = strlen(cstr);
-    
-    astr->m_len = cstrLen;
-    astr->m_rlen = cstrLen + 1;
-
     astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr) * sizeof(char));
     check_mem(astr_cstr(astr));
 
     memset(astr->m_buffer, 0, astrRLen(astr));
-    memccpy(astr->m_buffer, cstr, sizeof(char), astrLen(astr));
-
-    return ASTRING_SUCCESS;
-
-error:
-    return ASTRING_ERROR;
-}
-
-
-int astrConcat_cstr(astring astr, const char *cstr)
-{
-    if (astr == NULL || cstr == NULL)
-        return ASTRING_ERROR;
-
-    size_t cstrLen = strlen(cstr);
-
-    if (astr_cstr(astr) == NULL)
-    {
-        astr->m_len = cstrLen;
-        astr->m_rlen = cstrLen + 1;
-        astr->m_buffer = strdup(cstr);
-
-        return ASTRING_SUCCESS;
-    }
-
-    size_t oldLen = astrLen(astr);
-    astr->m_len += cstrLen;
-    astr->m_rlen += cstrLen;
-    astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr) * sizeof(char));
-    void *cpy = memccpy(astr->m_buffer + oldLen, cstr, sizeof(char), cstrLen);
-
-    check_mem(cpy);
+    memcpy(astr->m_buffer, cstr, astrLen(astr));
 
     return ASTRING_SUCCESS;
 
@@ -181,26 +150,135 @@ int astrConcat(astring astr, const_astring astr2)
 {
     if (astr == NULL || astr2 == NULL || astr_cstr(astr2) == NULL)
         return ASTRING_ERROR;
+        
+    size_t oldLen = astrLen(astr);
+    astr->m_len += astrLen(astr2);
+    astr->m_rlen += astrRLen(astr2);
 
     if (astr_cstr(astr) == NULL)
     {
-        astr->m_len = astrLen(astr2);
-        astr->m_rlen = astrRLen(astr2);
         astr->m_buffer = strdup(astr2->m_buffer);
+        check_mem(astr->m_buffer);
 
         return ASTRING_SUCCESS;
     }
 
-    size_t oldLen = astrLen(astr);
-    astr->m_len += astrLen(astr2);
-    astr->m_rlen += astrLen(astr2);
     astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr) * sizeof(char));
-    void *cpy = memccpy(astr->m_buffer + oldLen, astr2->m_buffer, sizeof(char), astrLen(astr2));
+    check_mem(astr->m_buffer);
+    
+    memcpy(astr->m_buffer + oldLen, astr2->m_buffer, astrLen(astr2));
+    astr->m_buffer[astrLen(astr)] = '\0';
 
-    check_mem(cpy);
 
     return ASTRING_SUCCESS;
     
+error:
+    return ASTRING_ERROR;
+}
+
+int astrConcatCstr(astring astr, const char *cstr)
+{
+    if (astr == NULL || cstr == NULL)
+        return ASTRING_ERROR;
+
+    size_t cstrLen = strlen(cstr);
+    size_t oldLen = astrLen(astr);
+    astr->m_len += cstrLen;
+    astr->m_rlen += cstrLen;
+
+    if (astr_cstr(astr) == NULL)
+    {
+        astr->m_rlen++;
+        astr->m_buffer = strdup(cstr);
+        check_mem(astr->m_buffer);
+
+        return ASTRING_SUCCESS;
+    }
+
+    astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr) * sizeof(char));
+    check_mem(astr->m_buffer);
+    
+    memcpy(astr->m_buffer + oldLen, cstr, cstrLen);
+    astr->m_buffer[astrLen(astr)] = '\0';
+    
+
+    return ASTRING_SUCCESS;
+
+error:
+    return ASTRING_ERROR;
+}
+
+int astrInsert(astring astr, size_t pos, const_astring bstr)
+{
+    if (astr == NULL || 
+        bstr == NULL || 
+        astr_cstr(astr) == NULL || 
+        astr_cstr(bstr) == NULL ||
+        pos >= astrLen(astr))
+        return ASTRING_ERROR;
+    else if (pos + 1 == astrLen(astr))
+        return astrConcat(astr, bstr);
+
+    size_t oldStrLen = astrLen(astr) - pos;
+    
+    astr->m_len += astrLen(bstr);
+    astr->m_rlen += astrLen(bstr);
+    astr->m_buffer = (char*)realloc((void*)astr->m_buffer, sizeof(char) * astrRLen(astr));
+    check_mem(astr->m_buffer);
+
+    memmove(astr->m_buffer + pos + astrLen(bstr), astr->m_buffer + pos, oldStrLen + 1);
+    memcpy(astr->m_buffer + pos, bstr->m_buffer, astrLen(bstr));
+
+    return ASTRING_SUCCESS;
+
+error:
+
+    return ASTRING_ERROR;
+}
+
+int astrInsertCstr(astring astr, size_t pos, const char *cstr)
+{
+    if (astr == NULL || 
+        cstr == NULL || 
+        astr_cstr(astr) == NULL ||
+        pos >= astrLen(astr))
+        return ASTRING_ERROR;
+    else if (pos + 1 == astrLen(astr))
+        return astrConcatCstr(astr, cstr);
+
+    size_t cstrLength = strlen(cstr);
+    size_t oldStrLen = astrLen(astr) - pos;
+
+    astr->m_len += cstrLength;
+    astr->m_rlen += cstrLength;
+    astr->m_buffer = (char*)realloc((void*)astr->m_buffer, sizeof(char) * astrRLen(astr));
+    check_mem(astr->m_buffer);
+
+    memmove(astr->m_buffer + pos + cstrLength, astr->m_buffer + pos, oldStrLen + 1);
+    memcpy(astr->m_buffer + pos, cstr, cstrLength);
+
+    return ASTRING_SUCCESS;
+
+error:
+    return ASTRING_ERROR;
+}
+
+int astrTrunc(astring astr, size_t end)
+{
+    if (astr == NULL || astr_cstr(astr) == NULL || end >= astrLen(astr))
+        return ASTRING_ERROR;
+    else if (end + 1 == astrLen(astr))
+        return ASTRING_SUCCESS;
+
+    astr->m_len -= (astrLen(astr) - end);
+    astr->m_rlen = astrLen(astr) + 1;
+    astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr) * sizeof(char));
+    check_mem(astr->m_buffer);
+
+    astr->m_buffer[astrLen(astr)] = '\0';
+    
+    return ASTRING_SUCCESS;
+
 error:
     return ASTRING_ERROR;
 }
@@ -370,6 +448,100 @@ bool astrContainsChar(const_astring astr, char c)
     return false;
 }
 
+int astrTrimStart(astring astr)
+{
+    if (astr == NULL || astr_cstr(astr) == NULL)
+        return ASTRING_ERROR;
+
+    size_t count = 0;
+    char *cstr = astr_cstr(astr);
+
+    for (; count < astrLen(astr); count++)
+        if (!isblank(cstr[count]))
+            break;
+
+    if (count != 0)
+    {
+        memmove(astr->m_buffer, astr->m_buffer + count, astrLen(astr) - count);
+        memset(astr->m_buffer + astrLen(astr) - count, 0, count);
+        astr->m_len = astrLen(astr) - count;
+        astr->m_rlen = astr->m_len + 1;
+        astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr) * sizeof(char));
+        check_mem(astr_cstr(astr));
+    }
+
+    return ASTRING_SUCCESS;
+
+error:
+    return ASTRING_ERROR;
+}
+
+int astrTrimEnd(astring astr)
+{
+    if (astr == NULL || astr_cstr(astr) == NULL)
+        return ASTRING_ERROR;
+
+    size_t count = 0;
+    char *cstr = astr_cstr(astr);
+
+    for (; astrLen(astr) - count - 1 >= 0; count++)
+    {
+        if (!isblank(cstr[astrLen(astr) - count - 1]))
+            break;
+
+        if (astrLen(astr) - count - 1 == 0)
+            break;
+    }
+
+    if (count != 0)
+    {
+        astr->m_len = astrLen(astr) - count;
+        astr->m_rlen = astr->m_len + 1;
+        astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr));
+        check_mem(astr_cstr(astr));
+        astr->m_buffer[astrLen(astr)] = '\0';
+    }
+
+    return ASTRING_SUCCESS;
+
+error:
+    return ASTRING_ERROR;
+}
+
+int astrTrim(astring astr)
+{
+    int success = astrTrimStart(astr);
+
+    if (success == ASTRING_ERROR)
+        return ASTRING_ERROR;
+
+    return astrTrimEnd(astr);
+}
+
+int astrToLowerASCII(astring astr)
+{
+    if (astr == NULL || astr_cstr(astr) == NULL)
+        return ASTRING_ERROR;
+
+    for (size_t i = 0; i < astrLen(astr); i++)
+        if (isupper(astr->m_buffer[i]))
+            astr->m_buffer[i] = tolower(astr->m_buffer[i]);
+
+    return ASTRING_SUCCESS;
+}
+
+int astrToUpperASCII(astring astr)
+{
+    if (astr == NULL || astr_cstr(astr) == NULL)
+        return ASTRING_ERROR;
+
+    for (size_t i = 0; i < astrLen(astr); i++)
+        if (islower(astr->m_buffer[i]))
+            astr->m_buffer[i] = toupper(astr->m_buffer[i]);
+
+    return ASTRING_SUCCESS;
+}
+
 void astrListDestroy(astringList list)
 {
     if (list)
@@ -396,7 +568,7 @@ static inline int splitCount(const_astring astr, const char *delimiters, size_t 
     {
         for (size_t j = 0; j < delimitersCount; j++)
         {
-            if(acstr[i] == delimiters[j]) //fix count
+            if(acstr[i] == delimiters[j])
             {
                 if (validSplit)
                     count++;
@@ -471,82 +643,16 @@ error:
     return NULL;
 }
 
-int astrTrimStart(astring astr)
-{
-    if (astr == NULL || astr_cstr(astr) == NULL)
-        return ASTRING_ERROR;
-
-    size_t count = 0;
-    char *cstr = astr_cstr(astr);
-
-    for (; count < astrLen(astr); count++)
-        if (!isblank(cstr[count]))
-            break;
-
-    if (count != 0)
-    {
-        memmove(astr->m_buffer, astr->m_buffer + count, astrLen(astr) - count);
-        memset(astr->m_buffer + astrLen(astr) - count, 0, count);
-        astr->m_len = astrLen(astr) - count;
-        astr->m_rlen = astr->m_len + 1;
-        astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr));
-        check_mem(astr_cstr(astr));
-    }
-
-    return ASTRING_SUCCESS;
-
-error:
-    return ASTRING_ERROR;
-}
-
-int astrTrimEnd(astring astr)
-{
-    if (astr == NULL || astr_cstr(astr) == NULL)
-        return ASTRING_ERROR;
-
-    size_t count = 0;
-    char *cstr = astr_cstr(astr);
-
-    for (; astrLen(astr) - count - 1 >= 0; count++)
-    {
-        if (!isblank(cstr[astrLen(astr) - count - 1]))
-            break;
-
-        if (astrLen(astr) - count - 1 == 0)
-            break;
-    }
-
-    if (count != 0)
-    {
-        astr->m_len = astrLen(astr) - count;
-        astr->m_rlen = astr->m_len + 1;
-        astr->m_buffer = (char*)realloc((void*)astr->m_buffer, astrRLen(astr));
-        check_mem(astr_cstr(astr));
-        astr->m_buffer[astrLen(astr)] = '\0';
-    }
-
-    return ASTRING_SUCCESS;
-
-error:
-    return ASTRING_ERROR;
-}
-
-int astrTrim(astring astr)
-{
-    int success = astrTrimStart(astr);
-
-    if (success == ASTRING_ERROR)
-        return ASTRING_ERROR;
-
-    return astrTrimEnd(astr);
-}
-
 int main()
 {
     astring str = astrFromCstr(" Hello world ");
     astrTrim(str);
-    printf("%lu\n", astrContainsChar(str, 'x'));
-    log("Some shit happend %s", "я");
+    astrToLowerASCII(str);
+    astrTrunc(str, 5);
+    struct tagastring str2 = astrStatic(" shitty");
+    astrInsert(str, 4, &str2);
+    log("%s", astr_cstr(str));
     astrDestroy(str);
+
     return 0;
 }

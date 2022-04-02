@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define ASTRING_SUCCESS 1
+#define ASTRING_ERROR -1
+
 struct tagastring
 {
     char *m_buffer;
@@ -12,19 +15,8 @@ struct tagastring
     size_t m_rlen;
 };
 
-#define ASTRING_SUCCESS 1
-#define ASTRING_ERROR -1
-
 typedef struct tagastring *astring;
 typedef const struct tagastring *const_astring;
-
-struct tagastringList
-{
-    astring *m_astrs;
-    size_t m_count;
-};
-
-typedef struct tagastringList *astringList;
 
 #define astrStatic(text) { .m_buffer = text, .m_len = sizeof(text) - 1, .m_rlen = sizeof(text) }
 
@@ -47,7 +39,14 @@ astring astrCreateCopy(const_astring astr);
 int astrSetFromCstr(astring astr, const char *cstr);
 
 int astrConcat(astring astr, const_astring astr2);
-int astrConcat_cstr(astring astr, const char *cstr);
+int astrConcatCstr(astring astr, const char *cstr);
+
+int astrInsert(astring astr, size_t pos, const_astring bstr);
+int astrInsertCstr(astring astr, size_t pos, const char *cstr);
+
+int astrTrunc(astring astr, size_t end);
+
+int astrCmp(const_astring astr, const_astring astr2);
 
 size_t astrFind(const_astring astr, const_astring astr2, size_t start, bool *found);
 size_t astrFindFirst(const_astring astr, const_astring astr2, bool *found);
@@ -63,13 +62,24 @@ int astrTrimStart(astring astr);
 int astrTrimEnd(astring astr);
 int astrTrim(astring astr);
 
+int astrToLowerASCII(astring astr);
+int astrToUpperASCII(astring astr);
+
+struct tagastringList
+{
+    astring *m_astrs;
+    size_t m_count;
+};
+
+typedef struct tagastringList *astringList;
+
 #define astrListAlloc() ((astringList)calloc(1, sizeof(struct tagastringList)))
 #define astrListAstrsAlloc(list) ((astring*)calloc(astrListCount(list), sizeof(astring)))
+void astrListDestroy(astringList list);
 
 #define astrListCount(list) ((list)->m_count)
 #define astrListGet(list, i) ((list)->m_astrs[i])
 
 astringList astrSplit(const_astring astr, const char *delimiters);
-
 
 #endif
