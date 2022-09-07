@@ -78,6 +78,12 @@ int main(void)
         
         if (strcmp(buffer, "q") == 0)
             break;
+        else if (strcmp(buffer, "cls") == 0)
+        {
+            fputs("Pamet je vycistena\n", stdout);
+            cleared = true;
+            continue;
+        }
         else if (strcmp(buffer, "sin") == 0)
             memory = sin(memory);
         else if (strcmp(buffer, "cos") == 0)
